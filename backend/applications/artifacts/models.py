@@ -30,7 +30,6 @@ class Artifact(models.Model):
     
     
     class Status(models.TextChoices):
-        PROVISIONING = "provisioning", "Provisioning"
         ACTIVE = "active", "Active"
         INACTIVE = "inactive", "Inactive"
         MAINTENANCE = "maintenance", "Maintenance"
@@ -44,14 +43,14 @@ class Artifact(models.Model):
     artifact_uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name="artifacts")
     name = models.CharField(max_length=100)
-    version = models.CharField(max_length=50)
-    description = models.TextField(blank=True)
+    version = models.CharField(max_length=50, default="not builded")
+    description = models.TextField(max_length=128)
     type = models.CharField(max_length=20, choices=Type.choices, default=Type.PAPER)
-    status = models.CharField(max_length=20, choices=Status.choices, default=Status.PROVISIONING)
+    status = models.CharField(max_length=20, choices=Status.choices, default=Status.INACTIVE)
 
     java_version = models.CharField(max_length=20)
     mc_version = models.CharField(max_length=20)
-    size_in_mb = models.PositiveIntegerField(validators=[MinValueValidator(1)])
+    size_in_mb = models.PositiveIntegerField(validators=[MinValueValidator(1)], null=True)
     cpu_cores = models.PositiveIntegerField(default=1)
     memory_in_mb = models.PositiveIntegerField(default=512)
 

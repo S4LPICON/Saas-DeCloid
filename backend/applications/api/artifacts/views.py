@@ -27,7 +27,13 @@ class ArtifactViewSet(viewsets.ModelViewSet):
         artifact = self.get_object()
 
         # crear tarea
-        task_id = enqueue_build_task(artifact)
+        try:
+            task_id = enqueue_build_task(artifact)
+        except ConnectionError as e:
+            return Response(
+                {"detail": "Could not connect to Redis server."},
+                status=503
+            )
 
         return Response(
             {"detail": "Build started", "task_id": task_id},
