@@ -1,0 +1,18 @@
+version: '3.9'
+
+services:
+  db:
+    image: postgres:16
+    container_name: mc_decloid_db1
+    restart: always
+    environment:
+      POSTGRES_USER: decloid_user
+      POSTGRES_PASSWORD: decloid_pass
+      POSTGRES_DB: decloid_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
