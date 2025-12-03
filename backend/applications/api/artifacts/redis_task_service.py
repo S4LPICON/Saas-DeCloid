@@ -1,53 +1,39 @@
 import uuid
 import json
 import redis
+import jwt
+from datetime import datetime, timedelta
 
+from decloid.settings.base import SECRET_KEY
 
-def try_connection():
-    # ----------------------------------------
-    # TODO: cambiar las variables hardcodeadas por variables de entorno
-    # ----------------------------------------
-
-    r = redis.Redis(host="localhost", port=6379, db=0, decode_responses=True)
-    try:
-        r.ping()
-    except redis.exceptions.ConnectionError:
-        return None
-    return r
-
-
+redis_pool = redis.ConnectionPool(host="localhost", port=6379, db=0, decode_responses=True)
+r = redis.Redis(connection_pool=redis_pool)
 
 def enqueue_build_task(artifact):
-    r = try_connection()
-    if r is None:
-        raise ConnectionError("Could not connect to Redis server.")
-    
-    # ----------------------------------------
-    # TODO: verifacar la disponibilidad del artifact.file.path (que el archivo este servido)
-    # ---------------------------------------- 
-    
     task_id = str(uuid.uuid4())
-
-    # ----------------------------------------
-    # TODO: no hardcodear el plugin_path
-    # ----------------------------------------
-
-
-    
-    task = {
+    payload = {
         "task_id": task_id,
         "artifact_uuid": str(artifact.artifact_uuid),
-        "zip_path": artifact.file.path,
-        "plugin_path": "/home/pinzon/zofrenic-solutions/DeCloidMC/tests_files/server.jar",
+        "exp": datetime.utcnow() + timedelta(minutes=30)
+    }
+    task_token = jwt.encode(payload, SECRET_KEY, algorithm="HS256")
+    print("Token JWT:", task_token)
+
+    task = {
+        "task_id": task_id,
+        "token": task_token,
+        "artifact_uuid": str(artifact.artifact_uuid),
+        "zip_path": artifact.zip_file.path,
+        "plugin_path": "/home/pinzon/zofrenic-solutions/DeCloidMC(only local) OLD/tests_files/worldedit.jar",
     }
 
-    # Empuja a Redis (cola básica)
+    # Enviar a Redis (solo la tarea, ya no necesitas guardar token allí)
     r.lpush("build_tasks", json.dumps(task))
 
-    # Marca estado inicial (opcional pero MUY útil)
+    # Estado inicial
     r.hset(f"build_status:{task_id}", mapping={
         "status": "queued",
         "artifact_uuid": str(artifact.artifact_uuid),
     })
 
-    return task_id
+    return task_id, task_token

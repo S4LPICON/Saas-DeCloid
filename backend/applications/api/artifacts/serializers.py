@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from applications.artifacts.models import Artifact
+from rest_framework import serializers
 
 class ArtifactSerializer(serializers.ModelSerializer):
     class Meta:
@@ -29,7 +30,7 @@ class ArtifactSerializer(serializers.ModelSerializer):
                 )
 
         # 3. Validación del archivo ZIP
-        file = attrs.get("file")
+        file = attrs.get("zip_file")
 
         if self.instance is None:
             # CREACIÓN -> ZIP obligatorio
@@ -56,3 +57,16 @@ class ArtifactSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         validated_data["owner"] = self.context["request"].user
         return super().create(validated_data)
+
+
+
+class ArtifactBuildReportSerializer(serializers.Serializer):
+    status = serializers.ChoiceField(
+        choices=["ready", "failed"],
+        required=True
+    )
+    size_in_mb = serializers.FloatField(required=False, allow_null=True)
+    registry_path = serializers.CharField(required=False, allow_blank=True, allow_null=True)
+    logs = serializers.CharField(required=False, allow_blank=True, allow_null=True)
+    version = serializers.CharField(required=True)  # 🔥 obligatorio
+    updated_at = serializers.DateTimeField(required=False)

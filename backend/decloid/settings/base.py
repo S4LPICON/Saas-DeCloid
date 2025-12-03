@@ -41,7 +41,7 @@ LOCAL_APPS = (
     'applications.artifacts',
     'applications.billing',
     'applications.nodes',
-    'applications.servers',
+    'applications.servers'
 )
 
 THIRD_PARTY_APPS = (
