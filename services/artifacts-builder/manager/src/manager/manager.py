@@ -10,7 +10,7 @@ def dispatch_task(task):
 
     # Lanza el worker como subproceso usando -m para que Python reconozca src
     subprocess.Popen(
-        ["python", "-m", "src.queue.run_worker_task", json.dumps(task)],
+        ["python", "-m", "src.run.run_worker_task", json.dumps(task)],
         cwd=worker_path
     )
 
