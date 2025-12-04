@@ -33,7 +33,7 @@ class Server(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name="servers")
     name = models.CharField(max_length=100)
 
-    node = models.ForeignKey(Node, on_delete=models.CASCADE, related_name="servers")
+    node = models.ForeignKey(Node, on_delete=models.PROTECT, related_name="servers")
     artifact = models.ForeignKey(Artifact, on_delete=models.CASCADE, related_name="servers")
 
     status = models.CharField(max_length=20, choices=Status.choices, default=Status.PROVISIONING)

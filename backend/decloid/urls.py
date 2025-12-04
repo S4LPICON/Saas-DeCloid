@@ -23,7 +23,9 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path("api/v1/auth/", include("applications.api.auth.urls")),
     path("api/v1/nodes/", include("applications.api.nodes.urls")),
+    
     path("api/v1/artifacts/", include("applications.api.artifacts.urls")),
+    path("api/v1/servers/", include("applications.api.servers.urls")),
 
 
 ]
