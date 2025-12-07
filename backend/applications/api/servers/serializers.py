@@ -1,6 +1,5 @@
 from rest_framework import serializers
 from applications.servers.models import Server
-from rest_framework import serializers
 
 class ServerMinimalSerializer(serializers.ModelSerializer):
     class Meta:

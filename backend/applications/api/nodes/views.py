@@ -29,8 +29,11 @@ class NodeViewSet(viewsets.ModelViewSet):
         return self.queryset.filter(owner=user)
     
     def perform_create(self, serializer):
-        # asigna automáticamente el owner
-        serializer.save(owner=self.request.user)
+        serializer.save(
+            owner=self.request.user,
+            subscription=getattr(self.request.user, 'subscription', None)
+        )
+
         
         
     def destroy(self, request, *args, **kwargs):

@@ -101,13 +101,6 @@ class ArtifactBuildReportSerializer(serializers.Serializer):
     version = serializers.CharField(required=True)
     updated_at = serializers.DateTimeField(required=False)
 
-    def validate_version(self, value):
-        # Valida formato simple semver: "1.2.3"
-        import re
-        if not re.match(r"^[0-9]+\.[0-9]+\.[0-9]+$", value):
-            raise serializers.ValidationError("Formato de versión inválido (usa semver: X.Y.Z).")
-        return value
-
     def validate_logs(self, value):
         if value and len(value) > 50000:
             return value[:50000] + "\n...[truncado por tamaño]"

@@ -82,7 +82,8 @@ infra/**/data/
 client/**/target/
 client/**/build/
 client/**/out/
-
+test/
+tests/
 plugins/
 logs/
 world/

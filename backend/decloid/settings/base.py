@@ -11,6 +11,10 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+import environ
+env = environ.Env()
+environ.Env.read_env()  # si usas .env
+ORCHESTRATOR_API_KEY = env("ORCHESTRATOR_API_KEY", default="supersecreto123")
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -69,6 +73,8 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'decloid.urls'
+
+
 
 TEMPLATES = [
     {
