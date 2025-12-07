@@ -7,22 +7,15 @@ def create_dockerfile(build_dir):
     FROM eclipse-temurin:21-jdk
 
     WORKDIR /server
-
-    # Copiar todo
+    
     COPY . /server
 
-    # Aceptar EULA
-    RUN echo "eula=true" > /server/eula.txt
-
-    # Buscar automáticamente el JAR del servidor
-    RUN SERVER_JAR=$(find . -maxdepth 3 -type f -iname "*.jar" | grep -E "paper|purpur|spigot|fabric|forge" | head -n 1) \
-        && echo "Detectado JAR: $SERVER_JAR" \
-        && echo "$SERVER_JAR" > server_launcher_path
+    RUN echo "eula=true" > eula.txt
 
     EXPOSE 25565
 
-    # RAM dinámica vía variable de entorno MC_RAM (ej: 2G, 3G)
-    CMD ["sh", "-c", "java -Xms${MC_RAM:-1G} -Xmx${MC_RAM:-2G} -jar $(cat server_launcher_path) nogui"]
+    # CMD directo al JAR que ya tienes
+    CMD ["sh", "-c", "java -Xms${MC_RAM:-1G} -Xmx${MC_RAM:-2G} -jar server.jar nogui"]
     """
 
     with open(dockerfile_path, "w") as f:
