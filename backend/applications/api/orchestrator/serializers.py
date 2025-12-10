@@ -19,7 +19,9 @@ class ServerOrchestratorSerializer(serializers.ModelSerializer):
             'port',
             'node',
             'artifact',
-            'owner' 
+            'owner',
+            'key',
+            'server_uuid'
             # Agrega 'container_id' si tu modelo lo tiene, suele ser útil que el orquestador lo mande
         ]
 

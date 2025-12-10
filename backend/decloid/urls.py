@@ -27,5 +27,7 @@ urlpatterns = [
     path("api/v1/artifacts/", include("applications.api.artifacts.urls")),
     path("api/v1/servers/", include("applications.api.servers.urls")),
     path("api/v1/orchestrator/servers/", include("applications.api.orchestrator.urls")),
+    path("api/v1/orchestrator/nodes/", include("applications.nodes.urls")),
+
 
 ]

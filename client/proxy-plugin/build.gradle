@@ -1,0 +1,73 @@
+plugins {
+    id 'java'
+    id 'eclipse'
+    id 'org.jetbrains.gradle.plugin.idea-ext' version '1.1.8'
+    id("xyz.jpenilla.run-velocity") version "2.3.1"
+    id("com.github.johnrengelman.shadow") version "8.1.1"
+}
+
+group = 'com.decloid'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+    maven {
+        name = "papermc-repo"
+        url = "https://repo.papermc.io/repository/maven-public/"
+    }
+}
+
+dependencies {
+    // Velocity API
+    compileOnly("com.velocitypowered:velocity-api:3.4.0-SNAPSHOT")
+    annotationProcessor("com.velocitypowered:velocity-api:3.4.0-SNAPSHOT")
+
+    // JSON lib (debe ir sombreada)
+    implementation("org.json:json:20231013")
+}
+
+def targetJavaVersion = 17
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.release = targetJavaVersion
+}
+
+tasks {
+    runVelocity {
+        velocityVersion("3.4.0-SNAPSHOT")
+    }
+}
+
+shadowJar {
+    archiveClassifier.set("") // hace que el jar sombreado sea el principal
+    relocate 'org.json', 'com.decloid.libs.json'
+}
+
+tasks.build {
+    dependsOn shadowJar
+}
+
+// ------------------------------------------------------
+// OPCIONAL (si tienes plantillas en src/main/templates)
+// ------------------------------------------------------
+
+def templateSource = file('src/main/templates')
+def templateDest = layout.buildDirectory.dir('generated/sources/templates')
+
+def generateTemplates = tasks.register('generateTemplates', Copy) { task ->
+    def props = ['version': project.version]
+    task.inputs.properties props
+
+    task.from templateSource
+    task.into templateDest
+    task.expand props
+}
+
+sourceSets.main.java.srcDir(generateTemplates.map { it.outputs })
+
+project.idea.project.settings.taskTriggers.afterSync generateTemplates
+project.eclipse.synchronizationTasks(generateTemplates)

@@ -94,14 +94,21 @@ class ArtifactSerializer(serializers.ModelSerializer):
         return super().create(validated_data)
 
 class ArtifactBuildReportSerializer(serializers.Serializer):
-    status = serializers.ChoiceField(choices=["ready", "failed"])
+    status = serializers.ChoiceField(choices=["success", "failed"])
     size_in_mb = serializers.FloatField(required=False, allow_null=True)
     registry_path = serializers.CharField(required=False, allow_blank=True, allow_null=True)
     logs = serializers.CharField(required=False, allow_blank=True, allow_null=True)
-    version = serializers.CharField(required=True)
+    version = serializers.CharField(required=False, allow_blank=True, allow_null=True)
     updated_at = serializers.DateTimeField(required=False)
 
     def validate_logs(self, value):
         if value and len(value) > 50000:
             return value[:50000] + "\n...[truncado por tamaño]"
         return value
+
+    def validate(self, attrs):
+        # Si status success, version es obligatoria
+        if attrs.get("status") == "success" and not attrs.get("version"):
+            raise serializers.ValidationError({"version": "version is required for successful builds"})
+        return attrs
+

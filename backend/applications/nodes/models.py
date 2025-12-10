@@ -1,3 +1,4 @@
+import secrets
 import uuid
 from django.db import models
 from django.contrib.auth.models import User
@@ -21,7 +22,8 @@ class Node(models.Model):
 
     node_uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name="nodes")
-    subscription = models.ForeignKey(UserSubscription, on_delete=models.CASCADE, related_name="nodes")
+    #subscription = models.ForeignKey(UserSubscription, on_delete=models.CASCADE, related_name="nodes")
+    key = models.CharField(max_length=128, default=secrets.token_hex(32))
     name = models.CharField(max_length=100)
     ip_address = models.CharField(max_length=45, validators=[validate_ipv46_address])
     location = models.CharField(max_length=32)
@@ -48,6 +50,8 @@ class Node(models.Model):
 
     daemon_port = models.PositiveIntegerField(default=8080)
     daemon_sftp_port = models.PositiveIntegerField(default=2022)
+    last_heartbeat = models.DateTimeField(auto_now=True)
+    is_online = models.BooleanField(default=False)
 
     @property
     def max_servers(self):

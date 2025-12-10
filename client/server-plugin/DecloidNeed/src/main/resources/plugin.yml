@@ -1,0 +1,6 @@
+name: DecloidNeed
+version: '1.0-SNAPSHOT'
+main: com.decloid.decloidNeed.DecloidNeed
+api-version: '1.21'
+authors: [ DeCloid ]
+website: decloid.com

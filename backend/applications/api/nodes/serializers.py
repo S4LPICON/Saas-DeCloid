@@ -12,7 +12,7 @@ class NodeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Node
         fields = "__all__"
-        read_only_fields = ['node_uuid', 'owner', 'subscription']  # <- subscription es read-only
+        read_only_fields = ['node_uuid', 'owner', 'subscription','key']  # <- subscription es read-only
 
     def validate(self, attrs):
         user = self.context['request'].user

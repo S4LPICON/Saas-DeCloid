@@ -99,3 +99,18 @@ class Artifact(models.Model):
     def __str__(self):
         return f"{self.name} v{self.version} ({self.type})"
 
+
+class ArtifactBuild(models.Model):
+    class Status(models.TextChoices):
+        PENDING = "pending"
+        RUNNING = "running"
+        SUCCESS = "success"
+        FAILED = "failed"
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    artifact = models.ForeignKey(Artifact, on_delete=models.CASCADE, related_name="builds")
+    status = models.CharField(max_length=20, choices=Status.choices, default=Status.PENDING)
+    logs = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    started_at = models.DateTimeField(null=True, blank=True)
+    finished_at = models.DateTimeField(null=True, blank=True)

@@ -23,6 +23,7 @@ class MeView(APIView):
 
         return Response({
             "id": user.id,
+            "username": user.username,
             "email": user.email,
             "plan": fake_plan,
             "usage": usage,

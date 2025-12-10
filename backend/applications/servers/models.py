@@ -1,3 +1,4 @@
+import secrets
 import uuid
 from django.db import models
 from django.contrib.auth.models import User
@@ -39,6 +40,8 @@ class Server(models.Model):
     status = models.CharField(max_length=20, choices=Status.choices, default=Status.PROVISIONING)
     ip_address = models.CharField(max_length=45, validators=[validate_ipv46_address])
     port = models.PositiveIntegerField()
+    
+    tps = models.FloatField(default=0)
 
     players_online = models.PositiveIntegerField(default=0)
     max_players = models.PositiveIntegerField(default=20)
@@ -49,6 +52,10 @@ class Server(models.Model):
     last_seen = models.DateTimeField(null=True, blank=True)
     create_date = models.DateTimeField(auto_now_add=True)
     uptime = models.BigIntegerField(default=0)
+    
+    key = models.CharField(max_length=128, default=secrets.token_hex(32))
+    last_heartbeat = models.DateTimeField(auto_now=True)
+    is_online = models.BooleanField(default=False)
 
     temp_logs_path = models.CharField(max_length=255, blank=True, null=True)
     docker_container_id = models.CharField(max_length=64, blank=True, null=True)

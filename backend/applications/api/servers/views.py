@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
-
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
 class ServerViewSet(viewsets.ModelViewSet):
@@ -16,36 +16,46 @@ class ServerViewSet(viewsets.ModelViewSet):
     queryset = Server.objects.all()
     serializer_class = ServerSerializer
     
-    def get_queryset(self):
-        user = self.request.user
-        return self.queryset.filter(owner=user)
+    def get_object(self):
+        # si estás en la acción heartbeat -> ignora owner=request.user
+        if self.action == "heartbeat":
+            return Server.objects.get(pk=self.kwargs["pk"])
+        return super().get_object()
+
     
     def perform_create(self, serializer):
         # asigna automáticamente el owner
         serializer.save(owner=self.request.user)
 
 
-    @action(detail=True, methods=['post'])
+    @action(
+        detail=True,
+        methods=['post'],
+        authentication_classes=[],
+        permission_classes=[AllowAny],
+    )
     def heartbeat(self, request, pk=None):
         server = self.get_object()
+        server.is_online = True
+        server.save(update_fields=["last_heartbeat", "is_online"])
+        
+        provided_key = request.headers.get("X-Server-Key")
+        if not provided_key or provided_key != server.key:
+            return Response(
+                {"detail": "Invalid or missing server key"},
+                status=status.HTTP_401_UNAUTHORIZED
+            )
 
-        # actualizar valores enviados por el nodo
         server.last_seen = timezone.now()
         server.status = Server.Status.ACTIVE
 
-        # campos que manda el nodo
-        server.docker_version = request.data.get("docker_version", server.docker_version)
-        server.daemon_version = request.data.get("daemon_version", server.daemon_version)
-        server.cpu_usage = request.data.get("cpu_usage", server.cpu_usage)
-        server.memory_usage = request.data.get("memory_usage", server.memory_usage)
-        server.storage_usage = request.data.get("storage_usage", server.storage_usage)
+        server.players_online = request.data.get("players", server.players_online)
+        server.tps = request.data.get("tps", server.tps)
 
-        server.save(update_fields=[
-            'last_seen', 'status', 'docker_version', 'daemon_version',
-            'cpu_usage', 'memory_usage', 'storage_usage'
-        ])
+        server.save(update_fields=['last_seen', 'status', 'players_online', 'tps'])
 
         return Response({"detail": "Heartbeat received"}, status=status.HTTP_200_OK)
+
 
 
 #--------------

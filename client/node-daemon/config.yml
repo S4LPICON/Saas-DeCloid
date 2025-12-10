@@ -1,0 +1,19 @@
+debug: false
+
+node:
+  uuid: "37ba0ef7-ab01-4e96-8c0d-b24664334ba5"
+  key: "f85c6535923078b66231560d6feb8c57d3eb410dca1ce002610ade55ca748407"
+
+docker:
+  base_port: 8090
+  max_port: 8125
+
+api:
+  host: 0.0.0.0
+  port: 8090
+  ssl:
+    enabled: false
+
+default: 25570
+
+remote: "http://localhost:8000"

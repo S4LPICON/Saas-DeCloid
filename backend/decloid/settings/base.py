@@ -14,7 +14,7 @@ from pathlib import Path
 import environ
 env = environ.Env()
 environ.Env.read_env()  # si usas .env
-ORCHESTRATOR_API_KEY = env("ORCHESTRATOR_API_KEY", default="supersecreto123")
+BACKEND_API_KEY = env("ORCHESTRATOR_API_KEY", default="supersecreto123")
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -26,7 +26,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-71b5u3yv51fax52$4*z3^9x&%423c(4f*iq3ila@!v_&x41z=f'
 
-
+CORS_ALLOW_ALL_ORIGINS = True
 
 
 # Application definition
@@ -49,6 +49,7 @@ LOCAL_APPS = (
 )
 
 THIRD_PARTY_APPS = (
+    "corsheaders",
     "django_extensions",
     'rest_framework',
     'rest_framework_simplejwt.token_blacklist',
@@ -64,6 +65,7 @@ REST_FRAMEWORK = {
 
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',

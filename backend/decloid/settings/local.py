@@ -14,7 +14,7 @@ ALLOWED_HOSTS = ["192.168.40.48", "localhost"]
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'decloid_db',
         'USER': 'decloid_user',
         'PASSWORD': 'decloid_pass',

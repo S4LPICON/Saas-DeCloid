@@ -19,7 +19,7 @@ from applications.api.artifacts.serializers import ArtifactSerializer
 class IsOrchestratorUser(permissions.BasePermission):
     """
     Solo permite acceso si el usuario se llama 'orchestrator_bot' 
-    (o es superusuario).
+    (o es superusuario). NADIE LO ESTA USANDO.
     """
     def has_permission(self, request, view):
         return (
