@@ -1,16 +1,16 @@
 debug: false
 
 node:
-  uuid: "37ba0ef7-ab01-4e96-8c0d-b24664334ba5"
-  key: "f85c6535923078b66231560d6feb8c57d3eb410dca1ce002610ade55ca748407"
+  uuid: "19790de5-6d07-40e2-a4d9-a22d3e625ba0"
+  key: "2fb0bbc4f8b867e674e198d44a035d883536f6472c5997cc5b2146fb5bebfd71"
 
 docker:
-  base_port: 8090
-  max_port: 8125
+  base_port: 8089
+  max_port: 8124
 
 api:
   host: 0.0.0.0
-  port: 8090
+  port: 8089
   ssl:
     enabled: false
 
